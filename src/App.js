@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import FormularioCadastro from "./components/FormularioCadastro";
 import ListaDeNotas from "./components/ListaDeNotas";
+import api from "./services/api";
 import "./assets/App.css";
 import './assets/index.css';
 
@@ -12,13 +13,15 @@ class App extends Component {
     }
   }
 
-  criarNota(titulo, texto) {
+  async componentDidMount() {
+    const response = await api.get("/notas");
+    this.setState({ notas: response.data, titulo: "", texto: "" });
+  }
+
+  async criarNota(titulo, texto) {
     const novaNota = { titulo, texto };
-    const novoArrayNotas = [...this.state.notas, novaNota];
-    const novoEstado = {
-      notas: novoArrayNotas
-    }
-    this.setState(novoEstado);
+    await api.post("/notas", novaNota);
+    this.componentDidMount();
   }
 
   render() {
